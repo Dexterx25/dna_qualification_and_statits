@@ -1,0 +1,14 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "Pjr11097",
+  "database": "testapp",
+  "entities": ["./src/database/entities/**/*.entity{.ts, .js}"],
+  "migrationsTableName": "custom_migration_table",
+  "migrations": ["./migration/*.{js,ts}"],
+  "cli": {
+    "migrationsDir": "./migration/"
+  }
+}
