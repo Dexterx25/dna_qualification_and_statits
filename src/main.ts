@@ -10,6 +10,8 @@ import {
   ExpressAdapter,
 } from "@nestjs/platform-express";
 import { LoggerService } from "./utils/logger";
+import { LoggingInterceptor, TimeoutInterceptor } from "./configurations/interceptors";
+import { ResponseInterceptor } from "./configurations/interceptors/response";
 
 async function bootstrap() {
   const logger = new LoggerService();
@@ -32,6 +34,11 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname.replace('dist', '.'), 'utils/pdf/templates/hbs'));
   app.setViewEngine('hbs');
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(logger),
+    new ResponseInterceptor(),
+    new TimeoutInterceptor(),
+  );
    await configSwagger(app)
 
   await app.listen(3000, () => {

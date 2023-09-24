@@ -1,2 +1,2 @@
 export * from './MatrizCatchFactory';
-export * from './MatrizValidateStrategy';
+export * from './sequenceDNA.validations';

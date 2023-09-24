@@ -3,12 +3,14 @@ import {  ApiOkResponse, ApiOperation, ApiResponse, ApiTags, getSchemaPath } fro
 import { RecluterService } from './recluter.service';
 import { RecluterResponseDTO, SequenceDTO } from './DTO';
 import { ExceptionsService } from 'src/configurations/exceptions';
+import { StatsService } from '../stats/stats.service';
 
 @ApiTags("recluter")
 @Controller('api/v1')
 export class RecluterController {
   constructor(
     private readonly recluterService: RecluterService,
+    private readonly statsService: StatsService,
     private readonly exeption: ExceptionsService
     ) {}
 
@@ -56,9 +58,14 @@ export class RecluterController {
      const sequenceFound = await this.recluterService.getSequenceBySequenceSTR(data) 
     if(sequenceFound){
         throw this.exeption.badRequestException({
+          statusCode: HttpStatus.BAD_REQUEST,
           message: 'ADN existente en el sistema, favor usar otro'
         })
      }
      await this.recluterService.postSequence(data)
+     await this.statsService.upsertStat({
+      id: Number(process.env.STATS_COUNT_HUMAN_MUTANT_ID),
+      count_mutant_dna: 1,
+     })
   };
 };

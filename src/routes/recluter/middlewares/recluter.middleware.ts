@@ -1,33 +1,21 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { CatchMatriz, ComponentDNAValidation, ComponentesCharacterDNAValidation, ContexValidationStrategy, DiagonalLeftRigthCatch, DiagonalRigthLeftCatch, DimensionSepDNAValidation, VerticalCatch } from './usesCases';
+import { CatchMatriz, ComponentDNAValidation, DiagonalLeftRigthCatch, DiagonalRigthLeftCatch, VerticalCatch } from './usesCases';
 import { FormatterToArray2dFromArrayString } from 'src/utils/formater';
 import {ISequence} from '../interfaces/sequence.interface';
+import { StatsService } from 'src/routes/stats/stats.service';
+import { IStats } from 'src/routes/stats/interfaces';
 
 @Injectable()
 export class RecluterSequenceDNAMiddleware implements NestMiddleware {
- async use(req: Request, _res: Response, next: NextFunction) {
+     constructor(
+          private readonly statsService : StatsService,
+          private readonly componentValidation: ComponentDNAValidation
+          ) {}
+   async use(req: Request, _res: Response, next: NextFunction) {
     const {dna}:ISequence  = req.body;
-    
-    /**
-     * Strategy Design Pattern
-     * to create multiple validation of "Letter soup" 
-     * Matriz DNA
-     */
-    const contextValidation = new ContexValidationStrategy()
-    
-    const initialValidations = [
-         /** Validation Dimension NxN  exists using ComponentDNAValidation Strategy */
-         contextValidation.executeValidation(DimensionSepDNAValidation, [dna]),
 
-         /** Validation Correct Characters DNA component exists using ComponentDNAValidation Strategy */
-         contextValidation.executeValidation(ComponentesCharacterDNAValidation, [dna]),
-    ];
-   await Promise.all(initialValidations)
-    .catch((err) => next(err))
-
-    /** format */
-   const matriz: string[][] =  FormatterToArray2dFromArrayString(dna)
+    const matriz: string[][] =  FormatterToArray2dFromArrayString(dna)
 
     /**
      * Use Factory Pattern Disign to create multiple new 
@@ -56,13 +44,22 @@ export class RecluterSequenceDNAMiddleware implements NestMiddleware {
     const arrRL = instanceArrRL.execute(matriz).arr
     const arrV = instanceArrV.execute(matriz).arr
 
+    /**
+     * statsCallBack to assign in Statistics collection
+     * counter humman and mutants
+     */
+    let dataStatToSave: IStats
+    function statsCallBack (dataStats: IStats): void {
+     dataStatToSave= dataStats
+    }
 
    const validations = [
-        /** Validation All posiblo position by Factory Matriz exists using ComponentDNAValidation Strategy */
-        contextValidation.executeValidation(ComponentDNAValidation, [arrLR,arrRL,arrV,dna]),
+        this.componentValidation.typeDNAValidation([arrLR,arrRL,arrV,dna], statsCallBack),
     ]
+    
     return Promise.all(validations)
     .then(() => next())
-    .catch((err) => next(err))
+    .catch((err) =>next(err))
+    .finally(async() => {if (dataStatToSave) await this.statsService.upsertStat(dataStatToSave)})
   }
 }

@@ -23,14 +23,7 @@ COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 3000
 
 RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont 
-
-    ENV APP=pdf_maker \
+    ENV APP=apptest \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 

@@ -1,1 +1,1 @@
-export * from './sequenceDNA';
+export * from './sequencedna-postgres.repository';
