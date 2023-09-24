@@ -4,18 +4,43 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RecluterController } from './recluter.controller';
 import { RecluterService } from './recluter.service';
 import { RecluterSequenceDNAMiddleware } from './middlewares';
-import { ExceptionsService } from 'src/configurations/exceptions';
-import { DNA } from 'src/database/postgreSQL';
 import { SequenceDNARepository } from 'src/database/repositoriesPostgreSQL';
+import { ExceptionsModule } from 'src/configurations/exceptions';
+import { MongooseModule } from '@nestjs/mongoose';
+import { DNASequenceMongo, UserSchema } from 'src/database/mongo';
+import { DNASequenceMongoRepository, StatsMongoReqpository } from 'src/database/repositoriesMongoDB';
+import { StatsService } from '../stats/stats.service';
+import { StatsSequencesMongo, StatsSequencesSchema } from '../../database/mongo/schemas/Stats.schema'
+import { ComponentDNAValidation } from './middlewares/usesCases';
+import { UsesCasesModule } from './middlewares/usesCases/uses_cases.modulse';
+import { RecluterSequenceDNAFormatValidations } from './middlewares/recluter.initials.middleware';
 
 @Module({
+  imports: [
+    MongooseModule.forFeature(
+      [
+        { name: DNASequenceMongo.name, schema: UserSchema },
+        { name: StatsSequencesMongo.name, schema: StatsSequencesSchema }
+      ]),
+    TypeOrmModule.forFeature([SequenceDNARepository]),
+    ExceptionsModule, 
+    ConfigModule,
+  ],
   controllers: [RecluterController],
-  imports: [TypeOrmModule.forFeature([DNA]), ConfigModule],
-  providers: [RecluterService, ExceptionsService, SequenceDNARepository],
+  providers: [
+    DNASequenceMongoRepository, 
+    ComponentDNAValidation, 
+    RecluterService, 
+    UsesCasesModule,
+    StatsService, 
+    StatsMongoReqpository],
   exports: [RecluterService],
 })
 export class RecluterModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer
+    .apply(RecluterSequenceDNAFormatValidations)
+    .forRoutes({path: 'api/v1/mutant', method: RequestMethod.POST})
     consumer
     .apply(RecluterSequenceDNAMiddleware)
     .forRoutes({path: 'api/v1/mutant', method: RequestMethod.POST})

@@ -9,28 +9,29 @@ import {
 } from '@nestjs/common';
 
 export interface IFormatExceptionMessage {
+  statusCode?: number;
   message: string;
-  code?: number;
+  error?: boolean;
 }
 
 @Injectable()
 export class ExceptionsService {
   notFoundException(data?: IFormatExceptionMessage): void {
-    throw new NotFoundException(data);
+    throw new NotFoundException({...data, error: true});
   }
   badRequestException(data: IFormatExceptionMessage): void {
-    throw new BadRequestException(data);
+    throw new BadRequestException({...data, error: true});
   }
   internalServerErrorException(data?: IFormatExceptionMessage): void {
-    throw new InternalServerErrorException(data);
+    throw new InternalServerErrorException({...data, error: true});
   }
   forbiddenException(data?: IFormatExceptionMessage): void {
-    throw new ForbiddenException(data);
+    throw new ForbiddenException({...data, error: true});
   }
   unauthorizedException(data?: IFormatExceptionMessage): void {
-    throw new UnauthorizedException(data);
+    throw new UnauthorizedException({...data, error: true});
   }
   conflicException(data?: IFormatExceptionMessage): void {
-    throw new ConflictException(data);
+    throw new ConflictException({...data, error: true});
   }
 }
