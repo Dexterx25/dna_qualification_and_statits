@@ -11,16 +11,20 @@ describe('BookService', () => {
   let model: Model<StatsSequencesMongo>;
 
   const mockDNA = {
-    "_id": "65119b8893351ef818dca309",
-    "dna": "[\"ATGCGA\",\"CAGTGC\",\"TTATGT\",\"AGAAGG\",\"CCCCTA\",\"CGTCGT\"]",
-    "createdAt": "2023-09-25T14:39:04.995Z",
-    "updatedAt": "2023-09-25T14:39:04.995Z"
-  };
+    "_id": "65119b8993351ef818dca30c",
+    "ratio": 3,
+    "count_human_dna": 1,
+    "count_mutant_dna": 3,
+    "id": 1,
+    "createdAt": "2023-09-25T14:39:05.011Z",
+    "updatedAt": "2023-09-25T16:38:50.770Z"
+  }
 
-  const statMockedService = {
+  const statMockedRepository = {
     find: jest.fn(),
     create: jest.fn(),
     findOne: jest.fn(),
+    getStats: jest.fn(),
     findById: jest.fn(),
     findByIdAndUpdate: jest.fn(),
     findByIdAndDelete: jest.fn(),
@@ -32,7 +36,7 @@ describe('BookService', () => {
         StatsMongoReqpository,
         {
           provide: getModelToken(StatsSequencesMongo.name),
-          useValue: statMockedService,
+          useValue: statMockedRepository,
         },
       ],
     }).compile();
@@ -51,7 +55,8 @@ describe('BookService', () => {
       jest
         .spyOn(model, 'create')
         .mockImplementationOnce(() => Promise.resolve(mockDNA));
-
+      jest
+        .spyOn(model, '')
       const result = await bookService.upsertStat(stat)
       expect(result).toEqual(void 0);
     });

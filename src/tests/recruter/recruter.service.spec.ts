@@ -2,13 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RecluterService } from 'src/routes/recluter/recluter.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { DNASequenceMongo, DNASequenceDocument  } from 'src/database/mongo/schemas/DNA.schema';
+import { DNASequenceMongo  } from 'src/database/mongo/schemas/DNA.schema';
 import { DNASequenceMongoRepository } from 'src/database/repositoriesMongoDB';
 
 describe('BookService', () => {
   let bookService: RecluterService;
   let model: Model<DNASequenceMongo>;
-  let document: DNASequenceDocument;
 
   const mockDNA = {
     "_id": "65119b8893351ef818dca309",
@@ -52,12 +51,11 @@ describe('BookService', () => {
         .mockImplementationOnce(() => Promise.resolve(mockDNA));
 
       const result = await bookService.postSequence(dnaSequence)
-      console.log('xd-->', result)
       expect(result).toEqual(mockDNA);
     });
   });
 
-  describe('find', () => {
+  describe('findOne', () => {
     it('should find ', async () => {
       const dnaSequence = {
         dna:[
@@ -75,7 +73,6 @@ describe('BookService', () => {
         .mockResolvedValue(mockDNA);
 
       const result: DNASequenceMongo | null = await bookService.getSequenceBySequenceSTR(dnaSequence)
-      console.log('xd-->', result)
       expect(result).toEqual(mockDNA);
     });
   });
