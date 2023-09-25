@@ -60,13 +60,43 @@ export class WafRegionalStack extends cdk.Stack {
     });
     this.addUserData(asg);
   
-    const repository = new codeCommit.Repository(this, 'CodeCommitRepo', {
-      repositoryName: `${this.stackName}-repo`,
-      description: 'codeComitRepository',
-      code: codeCommit.Code.fromDirectory(path.join(__dirname, 'lib/APP'))
-    });
-    console.log('pass repository')
 
+    const project01 = 
+    new codeBuild.Project(this, 'codeBuildProyect', {
+     securityGroups: [securityGroup],
+     source: codeBuild.Source.gitHub({owner: 'Dexterx25', repo: 'stackCDKAdvance'}),
+     vpc: vpc.vpc,
+     subnetSelection: vpc.vpc.selectSubnets({
+       subnets: vpc.subn,
+       onePerAz: true,
+     }),
+
+     environment: {
+       buildImage: codeBuild.LinuxBuildImage.AMAZON_LINUX_2
+     },
+     buildSpec: codeBuild.BuildSpec.fromObject({
+       version: "0.2",
+       phases: {
+         pre_build: {
+           commands: [
+             'env',
+             'export TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION}',
+             'export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)',
+             '/usr/local/bin/entrypoint.sh',
+             'echo Logging in to Amazon ECR',
+             'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com'
+           ]
+         },
+         build: {
+           commands: [
+             'cd flask-docker-app',
+             `docker build -t $ECR_REPO_URI:$TAG .`,
+             'docker push $ECR_REPO_URI:$TAG'
+           ]
+         },
+       }
+     }),
+   })
   
     const lb = new elbv2.ApplicationLoadBalancer(
       this, 
