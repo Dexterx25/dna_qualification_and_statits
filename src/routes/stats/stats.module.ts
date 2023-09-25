@@ -6,7 +6,7 @@ import { StatsService } from './stats.service';
 import { SequenceDNARepository } from 'src/database/repositoriesPostgreSQL';
 import { ExceptionsModule } from 'src/configurations/exceptions';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DNASequenceMongo, UserSchema } from 'src/database/mongo';
+import { DNASequenceMongo, DNASequenceSchema } from 'src/database/mongo';
 import { DNASequenceMongoRepository, StatsMongoReqpository } from 'src/database/repositoriesMongoDB';
 import { StatsSequencesMongo, StatsSequencesSchema } from 'src/database/mongo/schemas/Stats.schema';
 
@@ -14,7 +14,7 @@ import { StatsSequencesMongo, StatsSequencesSchema } from 'src/database/mongo/sc
   imports: [
     ExceptionsModule,
     MongooseModule.forFeature([
-      { name: DNASequenceMongo.name, schema: UserSchema },
+      { name: DNASequenceMongo.name, schema: DNASequenceSchema },
       { name: StatsSequencesMongo.name, schema: StatsSequencesSchema }
 
     ]),

@@ -40,6 +40,7 @@
     "dompurify": "^2.2.8",
     "express-basic-auth": "^1.2.0",
     "fastify-static": "^4.5.0",
+    "mongodb-memory-server": "^8.15.1",
     "mongoose": "^5.12.13",
     "pg": "^8.5.1",
     "reflect-metadata": "^0.1.13",
@@ -82,7 +83,10 @@
       "json",
       "ts"
     ],
-    "rootDir": ".",
+    "rootDir": "./",
+    "modulePaths": [
+      "<rootDir>"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -93,8 +97,7 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/src/",
-      "<rootDir>/migrations/"
+      "<rootDir>/src/tests"
     ],
     "moduleNameMapper": {
       "@app/aws/(.*)": "<rootDir>/libs/aws/$1",

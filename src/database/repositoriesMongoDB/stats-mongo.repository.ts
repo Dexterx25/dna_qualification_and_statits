@@ -22,7 +22,7 @@ export class StatsMongoReqpository {
 }
 
   async findByCondition(condition: FilterQuery<StatsSequencesModel>): Promise<StatsSequencesDocument|null> {
-    return this.statModel.findOne(condition).exec();
+    return this.statModel.findOne(condition)
   }
 
 }
