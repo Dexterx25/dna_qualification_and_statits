@@ -5,7 +5,7 @@ package-lock.json
 .cdk.staging
 cdk.out
 .idea
-./project_configs/environment_options.yaml
-./project_configs/consoleViewOnlyGroup.yaml
+project_configs/environment_options.yaml
+project_configs/consoleViewOnlyGroup.yaml
 cdk.context.json
 keypemToConnect.pem
