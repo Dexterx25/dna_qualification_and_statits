@@ -18,13 +18,13 @@ export class StatsController {
 
   @Get('stats')
   @ApiResponse({
-    status: HttpStatus.FOUND,
+    status: HttpStatus.OK,
     schema: {
         $ref: getSchemaPath(StatsDTO),
         example: stastsExampleRes
     }
   })
-  @HttpCode(HttpStatus.FOUND)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Endpoint para traer conteos de dna de mutantes y humanos con una relacio en ratio de cada uno',
     description: `Con este endpoint podemos ver el conteo estadistico de cada componente de DNA: Humano y Mutante más la ralacion

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RecluterService } from 'src/routes/recluter/recluter.service';
-import { getModelToken } from '@nestjs/mongoose';;
+import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DNASequenceMongo, DNASequenceDocument  } from 'src/database/mongo/schemas/DNA.schema';
 import { DNASequenceMongoRepository } from 'src/database/repositoriesMongoDB';
