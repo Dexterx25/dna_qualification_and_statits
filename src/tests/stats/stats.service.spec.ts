@@ -55,8 +55,7 @@ describe('BookService', () => {
       jest
         .spyOn(model, 'create')
         .mockImplementationOnce(() => Promise.resolve(mockDNA));
-      jest
-        .spyOn(model, '')
+  
       const result = await bookService.upsertStat(stat)
       expect(result).toEqual(void 0);
     });
