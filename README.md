@@ -25,4 +25,7 @@ npm run test
 run coverage:
 test:cov
 
+automatized tests github: 
+actions:  tests.yml
+
 
