@@ -10,7 +10,6 @@ import { StatsModule } from "./routes/stats/stats.module";
     RecluterModule,
     StatsModule,
     DatabaseModule,
-    RecluterModule,
     MongoDatabaseModule,
   ],
 })
