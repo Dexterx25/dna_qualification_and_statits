@@ -1,7 +1,14 @@
 name: Node.js CI
 
-on: [push]
+name: CI - Tests
 
+on:
+  push:
+    branches:
+      - main # Ajusta la rama a la que deseas que se aplique
+  pull_request:
+    branches:
+      - main # Ajusta la rama a la que deseas que se aplique
 jobs:
   build:
 
