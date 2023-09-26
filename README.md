@@ -28,5 +28,3 @@ test:cov
 automatized tests github: 
 actions:  tests.yml
 
-
-prueba automatized tests
