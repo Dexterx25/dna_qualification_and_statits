@@ -23,7 +23,7 @@ run tests:
 npm run test
 
 run coverage:
-test:cov
+npm test:cov
 
 database: mongoDB
 
