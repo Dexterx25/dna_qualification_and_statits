@@ -35,6 +35,7 @@ import { IStats } from "src/routes/stats/interfaces";
                 message: 'No es un ADN mutante, no puede ser reclutado'
             })
         }
+        Promise.resolve()
     }
 
     async dimensionValidation(arr: string[][]): Promise<any> {
@@ -55,6 +56,7 @@ import { IStats } from "src/routes/stats/interfaces";
             message: 'El limite maximo es una matriz de 10x10 debido a limites de capacidad de base de datos'
           })
       }
+      Promise.resolve()
     }
 
     async enableComponentesValidation(dna: string[][]) {
@@ -76,5 +78,6 @@ import { IStats } from "src/routes/stats/interfaces";
                 message: `ADN con componentes desconocidos: ${charactersNotAvaliable.join(', ')}`
             })
         }
+        Promise.resolve()
     }
 }

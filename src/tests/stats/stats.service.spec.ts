@@ -1,81 +1,124 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StatsService } from 'src/routes/stats/stats.service';
 import { getModelToken } from '@nestjs/mongoose';;
-import { Model } from 'mongoose';
 import { StatsSequencesMongo  } from 'src/database/mongo/schemas/Stats.schema';
 import { StatsMongoReqpository } from 'src/database/repositoriesMongoDB';
-import { IStats } from 'src/routes/stats/interfaces';
+import { Model } from 'mongoose';
 
-describe('BookService', () => {
-  let bookService: StatsService;
-  let model: Model<StatsSequencesMongo>;
+describe('statService', () => {
+  let statService: StatsService;
+  let statsRepository: StatsMongoReqpository;
+  let statModel = Model<StatsSequencesMongo>
 
-  const mockDNA = {
-    "_id": "65119b8993351ef818dca30c",
-    "ratio": 3,
-    "count_human_dna": 1,
-    "count_mutant_dna": 3,
-    "id": 1,
-    "createdAt": "2023-09-25T14:39:05.011Z",
-    "updatedAt": "2023-09-25T16:38:50.770Z"
-  }
+  afterEach(() => {    
+    jest.clearAllMocks();
+  });
 
-  const statMockedRepository = {
-    find: jest.fn(),
+  const statModelMoked = {
     create: jest.fn(),
-    findOne: jest.fn(),
-    getStats: jest.fn(),
-    findById: jest.fn(),
-    findByIdAndUpdate: jest.fn(),
-    findByIdAndDelete: jest.fn(),
+    findOneAndUpdate: jest.fn(),
+    findOne: jest.fn()
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StatsService,
-        StatsMongoReqpository,
         {
           provide: getModelToken(StatsSequencesMongo.name),
-          useValue: statMockedRepository,
+          useValue: statModelMoked,
+        },
+        {
+          provide: StatsMongoReqpository,
+          useValue: {
+            findOneAndUpdate: jest.fn(),
+            create: jest.fn(),
+            findByCondition: jest.fn(),
+          },
         },
       ],
     }).compile();
 
-    bookService = module.get<StatsService>(StatsService);
-    model = module.get<Model<StatsSequencesMongo>>(getModelToken(StatsSequencesMongo.name));
+    statService = module.get<StatsService>(StatsService);
+    statsRepository = module.get<StatsMongoReqpository>(StatsMongoReqpository)
+    statModel = module.get<Model<StatsSequencesMongo>>(getModelToken(StatsSequencesMongo.name));
   });
 
-  describe('create human stat', () => {
-    it('should create ', async () => {
-      const stat: IStats = {
-        count_human_dna: 1,
-        id: Number(process.env.STATS_COUNT_HUMAN_MUTANT_ID)
-    };
+  describe('upsertStat', () => {
 
-      jest
-        .spyOn(model, 'create')
-        .mockImplementationOnce(() => Promise.resolve(mockDNA));
-  
-      const result = await bookService.upsertStat(stat)
-      expect(result).toEqual(void 0);
+      it('should update an existing stat', async () => {
+        const testData = {
+          id: 1,
+          count_human_dna: 2,
+          count_mutant_dna: 3,
+        };
+
+        const existingStat = {
+          id: 1,
+          count_human_dna: 1,
+          count_mutant_dna: 2,
+        };
+
+        (statsRepository.findByCondition as jest.Mock).mockResolvedValue(existingStat);
+
+        await statService.upsertStat(testData);
+        
+        const new_human_count = (testData.count_human_dna || 0) + existingStat.count_human_dna;
+        const new_mutant_count = (testData.count_mutant_dna || 0) + existingStat.count_mutant_dna;
+
+        expect(statsRepository.findOneAndUpdate).toHaveBeenCalledWith({ id: testData.id }, {
+          id: testData.id,
+          count_human_dna: new_human_count,
+          count_mutant_dna: new_mutant_count,
+          ratio: new_mutant_count / new_human_count,
+        });
+      });
+  })
+
+  describe('getStats', () => {
+    it('should get stats by id', async () => {
+      const id = 1;
+      const expectedStat = {
+        id,
+        count_human_dna: 2,
+        count_mutant_dna: 3,
+      };
+
+      (statsRepository.findByCondition as jest.Mock).mockResolvedValue(expectedStat);
+
+      const result = await statService.getStats(id);
+
+      expect(result).toEqual(expectedStat);
+    });
+
+    it('should return null if stat not found', async () => {
+      const id = 1;
+
+      (statsRepository.findByCondition as jest.Mock).mockResolvedValue(null);
+
+      const result = await statService.getStats(id);
+
+      expect(result).toBeNull();
     });
   });
 
-  describe('create mutant stat', () => {
-    it('should create ', async () => {
-      const stat: IStats = {
-        count_human_dna: 1,
-        id: Number(process.env.STATS_COUNT_HUMAN_MUTANT_ID)
-    };
+   describe('createStat', () => {
+    it('create stat if not exists', async () => {
+      const testData = {
+        id: 1,
+        count_human_dna: 2,
+        count_mutant_dna: 3,
+      };
 
-      jest
-        .spyOn(model, 'create')
-        .mockImplementationOnce(() => Promise.resolve(mockDNA));
-      
-      const result = await bookService.upsertStat(stat)
-      expect(result).toEqual(void 0);
+    
+
+      (statsRepository.findByCondition as jest.Mock).mockResolvedValue(null);
+     
+      await statService.upsertStat(testData);
+
+      expect(statsRepository.create).toHaveBeenCalledWith(testData);
+      expect(statsRepository.findOneAndUpdate).toHaveBeenCalledTimes(0);
+      expect(statModel.create).toHaveBeenCalledTimes(0)
     });
-  });
-
+   })
 
 });

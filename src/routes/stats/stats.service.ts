@@ -18,7 +18,7 @@ export class StatsService {
         count_human_dna: (data.count_human_dna || 0) + statFound.count_human_dna,
         count_mutant_dna: (data.count_mutant_dna || 0) + statFound.count_mutant_dna,
       }
-      Modified.ratio = Number(Modified.count_mutant_dna! / Modified.count_human_dna!)
+      Modified.ratio = Modified.count_mutant_dna! / Modified.count_human_dna!
       await this.statsRepository.findOneAndUpdate({id}, Modified)
     } else {
       await this.statsRepository.create(data)

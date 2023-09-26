@@ -5,9 +5,10 @@ import { Model } from 'mongoose';
 import { DNASequenceMongo  } from 'src/database/mongo/schemas/DNA.schema';
 import { DNASequenceMongoRepository } from 'src/database/repositoriesMongoDB';
 
-describe('BookService', () => {
-  let bookService: RecluterService;
+describe('recruterService', () => {
+  let recruterService: RecluterService;
   let model: Model<DNASequenceMongo>;
+  let dnaSequenceMongoRepository: DNASequenceMongoRepository;
 
   const mockDNA = {
     "_id": "65119b8893351ef818dca309",
@@ -36,27 +37,38 @@ describe('BookService', () => {
       ],
     }).compile();
 
-    bookService = module.get<RecluterService>(RecluterService);
+    recruterService = module.get<RecluterService>(RecluterService);
     model = module.get<Model<DNASequenceMongo>>(getModelToken(DNASequenceMongo.name));
+    dnaSequenceMongoRepository = module.get<DNASequenceMongoRepository>(DNASequenceMongoRepository)
   });
 
   describe('create', () => {
     it('should create ', async () => {
       const dnaSequence = {
-        dna:['asd']
+        dna:[
+          "ATGCGA",
+          "CAGTGC",
+          "TTATGT",
+          "AGAAGG",
+          "CCCCTA",
+          "TCACTG"
+        ]
       };
 
       jest
         .spyOn(model, 'create')
         .mockImplementationOnce(() => Promise.resolve(mockDNA));
 
-      const result = await bookService.postSequence(dnaSequence)
+      jest.spyOn(dnaSequenceMongoRepository, 'create')
+
+      const result = await recruterService.postSequence(dnaSequence)
+      expect(dnaSequenceMongoRepository.create).toHaveBeenCalledWith({dna: JSON.stringify(dnaSequence.dna)})
       expect(result).toEqual(mockDNA);
     });
   });
 
-  describe('findOne', () => {
-    it('should find ', async () => {
+  describe('findOneByDNA', () => {
+    it('should find it ', async () => {
       const dnaSequence = {
         dna:[
           "ATGCGA",
@@ -72,8 +84,14 @@ describe('BookService', () => {
         .spyOn(model, 'findOne')
         .mockResolvedValue(mockDNA);
 
-      const result: DNASequenceMongo | null = await bookService.getSequenceBySequenceSTR(dnaSequence)
+        
+      jest
+      .spyOn(dnaSequenceMongoRepository, 'findOneByDNA')
+
+      const result: DNASequenceMongo | null = await recruterService.getSequenceBySequenceSTR(dnaSequence)
+      expect(dnaSequenceMongoRepository.findOneByDNA).toHaveBeenCalledWith({dna: JSON.stringify(dnaSequence.dna)})
       expect(result).toEqual(mockDNA);
+      
     });
   });
 });
