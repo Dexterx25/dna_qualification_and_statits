@@ -19,3 +19,13 @@ http://localhost:3000/api/v1/testApp/docs/#/recluter
 endpoints recruter stats:
 http://localhost:3000/api/v1/testApp/docs/#/stats
 
+run tests: 
+npm run test
+
+run coverage:
+test:cov
+
+automatized tests github: 
+actions:  tests.yml
+
+
