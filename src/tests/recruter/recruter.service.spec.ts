@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RecluterService } from 'src/routes/recluter/recluter.service';
+import { RecluterService } from 'src/modules/recluter/recluter.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DNASequenceMongo  } from 'src/dataAccess/databases/mongodb/schemas/DNA.schema';

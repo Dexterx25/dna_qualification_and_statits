@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { StatsSequencesMongo } from "src/dataAccess/databases/mongodb/schemas/Stats.schema";
 import { StatsMongoReqpository } from "src/dataAccess/databases/mongodb/repositories";
-import { StatsController } from "src/routes/stats/stats.controller";
-import { StatsService } from "src/routes/stats/stats.service";
+import { StatsController } from "src/modules/stats/stats.controller";
+import { StatsService } from "src/modules/stats/stats.service";
 
 
 describe('StatsController', () => {

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { RecluterSequenceDNAMiddleware } from "src/routes/recluter/middlewares/recluter.middleware";
+import { RecluterSequenceDNAMiddleware } from "src/modules/recluter/middlewares/recluter.middleware";
 import { Request, Response, NextFunction } from 'express';
-import { StatsService } from "src/routes/stats/stats.service";
-import { ComponentDNAValidation } from "src/routes/recluter/middlewares/usesCases";
+import { StatsService } from "src/modules/stats/stats.service";
+import { ComponentDNAValidation } from "src/modules/recluter/middlewares/usesCases";
 import { ExceptionsService } from "src/configurations/exceptions";
 
 describe('RecluterSequenceDNAMiddleware', () => {

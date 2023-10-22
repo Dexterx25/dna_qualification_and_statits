@@ -1,9 +1,9 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { RecluterSequenceDNAFormatValidations } from "src/routes/recluter/middlewares/recluter.initials.middleware";
-import { ComponentDNAValidation } from "src/routes/recluter/middlewares/usesCases";
+import { RecluterSequenceDNAFormatValidations } from "src/modules/recluter/middlewares/recluter.initials.middleware";
+import { ComponentDNAValidation } from "src/modules/recluter/middlewares/usesCases";
 import { Request, Response, NextFunction } from 'express';
 import { BadRequestException } from '@nestjs/common';
-import { StatsService } from "src/routes/stats/stats.service";
+import { StatsService } from "src/modules/stats/stats.service";
 import { ExceptionsService } from "src/configurations/exceptions";
 
 
