@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { StatsService } from 'src/routes/stats/stats.service';
+import { StatsService } from 'src/modules/stats/stats.service';
 import { getModelToken } from '@nestjs/mongoose';;
-import { StatsSequencesMongo  } from 'src/database/mongo/schemas/Stats.schema';
-import { StatsMongoReqpository } from 'src/database/repositoriesMongoDB';
+import { StatsSequencesMongo  } from 'src/dataAccess/databases/mongodb/schemas/Stats.schema';
+import { StatsMongoReqpository } from 'src/dataAccess/databases/mongodb/repositories';
 import { Model } from 'mongoose';
 
 describe('statService', () => {
