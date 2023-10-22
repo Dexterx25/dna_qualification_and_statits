@@ -1,2 +1,1 @@
-export * from "./postgresql/database.module";
-export * from "./mongodb/database.module"
+export * from './database.module'
