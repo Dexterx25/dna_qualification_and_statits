@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { DNASequenceModel, DNASequenceMongo } from '../schemas/DNA.schema'
-import { ISequenceFormated } from 'src/routes/recluter/interfaces';
+import { ISequenceFormated } from 'src/modules/recluter/interfaces';
 import { FilterQuery } from 'mongoose';
 
 @Injectable()

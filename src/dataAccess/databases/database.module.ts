@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as entities from './postgresql/index'
@@ -14,6 +14,8 @@ const listEntities = Object.values(entities);
         }),
       }),
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule.forRoot({})],
+      inject: [ConfigService],
         useFactory: (configService: ConfigService) => {
             const stage = configService.get<string>("STAGE");
             if (stage === "dev" || !stage) {
@@ -66,4 +68,4 @@ const listEntities = Object.values(entities);
     })
   ],
 })
-export class AppModule {}
+export class DatabaseModule {}

@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { ExceptionsService } from "src/configurations/exceptions";
-import { IStats } from "src/routes/stats/interfaces";
+import { IStats } from "src/modules/stats/interfaces";
 
   /** Strategy Validation Componentes DNA */
   @Injectable()

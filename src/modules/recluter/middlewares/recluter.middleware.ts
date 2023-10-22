@@ -3,8 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 import { CatchMatriz, ComponentDNAValidation, DiagonalLeftRigthCatch, DiagonalRigthLeftCatch, VerticalCatch } from './usesCases';
 import { FormatterToArray2dFromArrayString } from 'src/utils/formater';
 import {ISequence} from '../interfaces/sequence.interface';
-import { StatsService } from 'src/routes/stats/stats.service';
-import { IStats } from 'src/routes/stats/interfaces';
+import { StatsService } from 'src/modules/stats/stats.service';
+import { IStats } from 'src/modules/stats/interfaces';
 
 @Injectable()
 export class RecluterSequenceDNAMiddleware implements NestMiddleware {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { StatsSequencesModel, StatsSequencesMongo, StatsSequencesDocument } from '../schemas/Stats.schema'
 import { FilterQuery } from 'mongoose';
-import { IStats } from 'src/routes/stats/interfaces';
+import { IStats } from 'src/modules/stats/interfaces';
 
 @Injectable()
 export class StatsMongoReqpository {

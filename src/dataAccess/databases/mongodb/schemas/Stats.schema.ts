@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IStats } from 'src/routes/stats/interfaces';
+import { IStats } from 'src/modules/stats/interfaces';
 
 @Schema({  timestamps: true, versionKey: false})
 export class StatsSequencesMongo implements IStats  {
