@@ -3,7 +3,7 @@ import { RecluterController } from 'src/routes/recluter/recluter.controller';
 import { RecluterService } from 'src/routes/recluter/recluter.service';
 import { StatsService } from 'src/routes/stats/stats.service';
 import { ExceptionsService } from 'src/configurations/exceptions';
-import { DNASequenceMongo } from 'src/database/mongo';
+import { DNASequenceMongo } from 'src/dataAccess/databases/mongodb';
 import { RecluterSequenceDNAMiddleware } from 'src/routes/recluter/middlewares';
 import { ComponentDNAValidation } from 'src/routes/recluter/middlewares/usesCases';
 import { BadRequestException } from '@nestjs/common';

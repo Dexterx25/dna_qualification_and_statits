@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import {ISequence} from "./interfaces/sequence.interface";
 //import { SequenceDNARepository } from "src/database/repositoriesPostgreSQL";
-import {DNASequenceMongoRepository} from 'src/database/repositoriesMongoDB'
+import {DNASequenceMongoRepository} from 'src/dataAccess/databases/mongodb/repositories'
 //import { DNA } from "src/database/postgreSQL";
-import { DNASequenceMongo } from "src/database/mongo";
+import { DNASequenceMongo } from "src/dataAccess/databases/mongodb";
 
 @Injectable()
 export class RecluterService {

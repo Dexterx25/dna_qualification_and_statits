@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { StatsSequencesModel, StatsSequencesMongo, StatsSequencesDocument } from '../mongo/schemas/Stats.schema'
+import { StatsSequencesModel, StatsSequencesMongo, StatsSequencesDocument } from '../schemas/Stats.schema'
 import { FilterQuery } from 'mongoose';
 import { IStats } from 'src/routes/stats/interfaces';
 

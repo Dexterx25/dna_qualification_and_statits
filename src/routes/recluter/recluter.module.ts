@@ -4,13 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RecluterController } from './recluter.controller';
 import { RecluterService } from './recluter.service';
 import { RecluterSequenceDNAMiddleware } from './middlewares';
-import { SequenceDNARepository } from 'src/database/repositoriesPostgreSQL';
+import { SequenceDNARepository } from 'src/dataAccess/databases/postgresql/repositories';
 import { ExceptionsModule } from 'src/configurations/exceptions';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DNASequenceMongo, DNASequenceSchema } from 'src/database/mongo';
-import { DNASequenceMongoRepository, StatsMongoReqpository } from 'src/database/repositoriesMongoDB';
+import { DNASequenceMongo, DNASequenceSchema } from 'src/dataAccess/databases/mongodb';
+import { DNASequenceMongoRepository, StatsMongoReqpository } from 'src/dataAccess/databases/mongodb/repositories';
 import { StatsService } from '../stats/stats.service';
-import { StatsSequencesMongo, StatsSequencesSchema } from '../../database/mongo/schemas/Stats.schema'
+import { StatsSequencesMongo, StatsSequencesSchema } from '../../dataAccess/databases/mongodb/schemas/Stats.schema'
 import { ComponentDNAValidation } from './middlewares/usesCases';
 import { UsesCasesModule } from './middlewares/usesCases/uses_cases.modulse';
 import { RecluterSequenceDNAFormatValidations } from './middlewares/recluter.initials.middleware';

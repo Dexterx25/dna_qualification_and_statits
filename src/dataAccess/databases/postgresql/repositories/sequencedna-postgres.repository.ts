@@ -1,4 +1,4 @@
-import { DNA } from "src/database/postgreSQL";
+import { DNA } from "src/dataAccess/databases/postgresql";
 import { EntityRepository, Repository } from "typeorm";
 
 @EntityRepository(DNA)

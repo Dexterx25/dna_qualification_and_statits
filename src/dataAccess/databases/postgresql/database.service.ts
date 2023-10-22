@@ -1,6 +1,6 @@
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import * as entities from "../database/postgreSQL";
+import * as entities from ".";
 
 const listEntities = Object.values(entities);
 export const databaseProvider = TypeOrmModule.forRootAsync({

@@ -4,7 +4,7 @@ import { RecluterService } from './recluter.service';
 import { RecluterResponseDTO, SequenceDTO } from './DTO';
 import { ExceptionsService } from 'src/configurations/exceptions';
 import { StatsService } from '../stats/stats.service';
-import { DNASequenceMongo } from 'src/database/mongo';
+import { DNASequenceMongo } from 'src/dataAccess/databases/mongodb';
 
 @ApiTags("recluter")
 @Controller('api/v1')

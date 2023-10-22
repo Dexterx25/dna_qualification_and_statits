@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import {StatsMongoReqpository} from 'src/database/repositoriesMongoDB'
+import {StatsMongoReqpository} from 'src/dataAccess/databases/mongodb/repositories'
 import { IStats } from "./interfaces";
-import { StatsSequencesMongo } from "src/database/mongo/schemas/Stats.schema";
+import { StatsSequencesMongo } from "src/dataAccess/databases/mongodb/schemas/Stats.schema";
 
 @Injectable()
 export class StatsService {
