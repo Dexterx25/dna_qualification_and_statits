@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        COVERAGE_THRESHOLD = 80
+        COVERAGE_THRESHOLD = 95
     }
     agent {
         kubernetes {
