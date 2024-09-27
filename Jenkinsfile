@@ -1,19 +1,8 @@
 pipeline {
       agent {
         kubernetes {
-            label 'nodejs'
+            label 'jenkins-node'
             defaultContainer 'node'
-            yaml """
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: node
-                image: node:20-alpine
-                command:
-                - cat
-                tty: true
-            """
         }
     }
     stages {
