@@ -26,6 +26,11 @@ pipeline {
                 command:
                 - cat
                 tty: true
+              - name: sonar-scanner
+                image: sonarsource/sonar-scanner-cli
+                command:
+                - cat
+                tty: true
               - name: docker
                 image: docker:20.10
                 command:
