@@ -41,7 +41,7 @@ pipeline {
        stage('Unit Tests') {
             steps {
                 // Ejecutar pruebas unitarias
-                sh 'npm run test:unit --coverage'
+                sh 'npm run test:cov'
                 // Verificar cobertura de código
                 script {
                     def coverage = sh(script: 'npm run coverage-report', returnStdout: true).trim()
