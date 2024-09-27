@@ -1,4 +1,7 @@
 pipeline {
+       environment {
+        COVERAGE_THRESHOLD = 80
+     }
       agent {
         kubernetes {
             label 'nodejs'
@@ -31,6 +34,19 @@ pipeline {
                         sh 'npm install'
                     } else {
                         echo 'No package.json found, skipping build.'
+                    }
+                }
+            }
+        }
+       stage('Unit Tests') {
+            steps {
+                // Ejecutar pruebas unitarias
+                sh 'npm run test:unit --coverage'
+                // Verificar cobertura de código
+                script {
+                    def coverage = sh(script: 'npm run coverage-report', returnStdout: true).trim()
+                    if (coverage < COVERAGE_THRESHOLD) {
+                        error("Cobertura de pruebas unitarias es menor a ${COVERAGE_THRESHOLD}%")
                     }
                 }
             }
