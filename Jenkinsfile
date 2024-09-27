@@ -9,7 +9,7 @@ pipeline {
         IMAGE_NAME = 'dna'
         BRANCH_NAME_DEV = 'dev'
         BRANCH_NAME_QA = 'qa'
-        BRANCH_NAME_DEV = 'main'
+        BRANCH_NAME_PROD = 'main'
         ECR_REPO = '160885288068.dkr.ecr.us-east-2.amazonaws.com/repotest'
     }
     agent {
