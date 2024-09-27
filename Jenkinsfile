@@ -45,6 +45,7 @@ pipeline {
                   path: /var/run/docker.sock
             """
         }
+    }
     stages {
         stage('Checkout') {
             steps {
