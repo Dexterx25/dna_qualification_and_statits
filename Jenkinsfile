@@ -1,8 +1,19 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:20-alpine'
-            args '-u root'
+      agent {
+        kubernetes {
+            label 'nodejs'
+            defaultContainer 'node'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: node
+                image: node:20-alpine
+                command:
+                - cat
+                tty: true
+            """
         }
     }
     stages {
