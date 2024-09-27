@@ -40,16 +40,24 @@ pipeline {
         }
        stage('Unit Tests') {
             steps {
-                // Ejecutar pruebas unitarias
-                sh 'npm run test:cov'
-                // Verificar cobertura de código
-                script {
-                    def coverage = sh(script: 'npm run test:cov', returnStdout: true).trim()
+                // Ejecutar pruebas unitarias y capturar la salida
+                    def coverageOutput = sh(script: 'npm run test:cov:jenkins', returnStdout: true).trim()
                     echo "Salida de la cobertura: ${coverageOutput}"
-                    if (coverage < COVERAGE_THRESHOLD) {
-                        error("Cobertura de pruebas unitarias es menor a ${COVERAGE_THRESHOLD}%")
+
+                    // Extraer el porcentaje de cobertura usando una expresión regular
+                    def matcher = coverageOutput =~ /(\d+)%/
+                    if (matcher) {
+                        // Obtener el primer grupo de captura (el porcentaje)
+                        def coverage = matcher[0][1].toInteger()
+                        echo "Cobertura de código: ${coverage}%"
+                        
+                        // Verificar la cobertura
+                        if (coverage < COVERAGE_THRESHOLD) {
+                            error("Cobertura de pruebas unitarias es menor a ${COVERAGE_THRESHOLD}%")
+                        }
+                    } else {
+                        error("No se pudo encontrar el porcentaje de cobertura en la salida: ${coverageOutput}")
                     }
-                }
             }
         }
     }
