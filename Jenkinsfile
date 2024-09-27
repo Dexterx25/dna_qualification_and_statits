@@ -20,6 +20,11 @@ pipeline {
                 command:
                 - cat
                 tty: true
+              - name: sonar-scanner
+                image: sonarsource/sonar-scanner-cli
+                command:
+                - cat
+                tty: true
             """
         }
     }
@@ -59,8 +64,10 @@ pipeline {
             steps {
                 script {
                     def scannerHome = "${SCANNER_HOME}"
-                    withSonarQubeEnv(SONARQUBE_SERVER) {
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT} -Dsonar.sources=src -Dsonar.host.url=${SONAR_URL}"
+                    container('sonar-scanner') {
+                        withSonarQubeEnv(SONARQUBE_SERVER) {
+                            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT} -Dsonar.sources=src -Dsonar.host.url=${SONAR_URL}"
+                        }
                     }
                 }
             }
