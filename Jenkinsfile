@@ -45,7 +45,7 @@ pipeline {
                 // Verificar cobertura de código
                 script {
                     def coverage = sh(script: 'npm run test:cov', returnStdout: true).trim()
-                    echo coverage 
+                    echo "Salida de la cobertura: ${coverageOutput}"
                     if (coverage < COVERAGE_THRESHOLD) {
                         error("Cobertura de pruebas unitarias es menor a ${COVERAGE_THRESHOLD}%")
                     }
