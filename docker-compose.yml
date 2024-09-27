@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  nestjs:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST_DEV: ${DB_HOST_DEV}
+      DB_PORT_DEV: ${DB_PORT_DEV}
+      DB_USER_DEV: ${DB_USER_DEV}
+      DB_PASSWORD_DEV: ${DB_PASSWORD_DEV}
+      DB_DATABASE_DEV: ${DB_DATABASE_DEV}
+      MONGO_URI: ${MONGO_URI}
+    depends_on:
+      - postgres
+      - mongodb
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USER_DEV}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_DEV}
+      POSTGRES_DB: ${DB_DATABASE_DEV}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  postgres_data:
+    driver: local
+  mongo-data:
+    driver: local
