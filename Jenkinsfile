@@ -43,7 +43,7 @@ pipeline {
                     sh 'npm run test:cov'
 
                     // Leer el archivo coverage-summary.json para obtener el porcentaje de cobertura
-                    def coverageData = readJSON(file: 'coverage/coverage-summary.json')
+                    def coverageData = readJSON file: 'coverage/coverage-summary.json'
                     def coverage = coverageData.total.lines.pct
 
                     echo "Cobertura de código: ${coverage}%"
