@@ -13,7 +13,7 @@ pipeline {
         ECR_REPO = '160885288068.dkr.ecr.us-east-2.amazonaws.com/repotest'
     }
     agent {
-       kubernetes {
+        kubernetes {
             label 'nodejs'
             defaultContainer 'node'
             yaml """
@@ -32,24 +32,30 @@ pipeline {
                 - cat
                 tty: true
               - name: docker
-                image: docker:latest
+                image: docker:20.10
                 command:
                 - cat
                 tty: true
                 volumeMounts:
-                  - name: docker-socket
-                    mountPath: /var/run/docker.sock
-            volumes:
+                - name: docker-socket
+                  mountPath: /var/run/docker.sock
+              volumes:
               - name: docker-socket
                 hostPath:
                   path: /var/run/docker.sock
             """
         }
-    }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                container('docker') {
+                    sh 'docker build -t my-app .'
+                }
             }
         }
         stage('Build') {
