@@ -45,9 +45,8 @@ pipeline {
                     // Leer el archivo coverage-summary.json para obtener el porcentaje de cobertura
                     def coverageData = readJSON file: 'coverage/coverage-summary.json'
                     def coverage = coverageData.total.lines.pct
-
                     echo "Cobertura de código: ${coverage}%"
-                    if (coverage < COVERAGE_THRESHOLD) {
+                    if (assert coverage > COVERAGE_THRESHOLD) {
                         error("Cobertura de pruebas unitarias es menor a ${COVERAGE_THRESHOLD}%")
                     }
                 }
