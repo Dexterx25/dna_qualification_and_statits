@@ -1,4 +1,4 @@
-pipeline {
+pipeline { 
     environment {
         COVERAGE_THRESHOLD = 90
         SONARQUBE_SERVER = 'sonar-server'
@@ -11,6 +11,7 @@ pipeline {
         BRANCH_NAME_QA = 'qa'
         BRANCH_NAME_PROD = 'main'
         ECR_REPO = '345594604328.dkr.ecr.us-east-2.amazonaws.com/cdk-hnb659fds-container-assets-345594604328-us-east-2'
+        IMAGE_TAG = "${BRANCH_NAME_DEV}-${env.BUILD_ID}" // o usa otro tag que prefieras
     }
     agent {
         kubernetes {
@@ -31,18 +32,11 @@ pipeline {
                 command:
                 - cat
                 tty: true
-              - name: containerd
-                image: containerd/containerd
+              - name: docker
+                image: docker:latest
                 command:
                 - cat
                 tty: true
-                volumeMounts:
-                - name: containerd-socket
-                  mountPath: /run/containerd/containerd.sock
-              volumes:
-              - name: containerd-socket
-                hostPath:
-                  path: /run/containerd/containerd.sock
             """
         }
     }
@@ -104,58 +98,39 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image to ECR') {
+        stage('Build Docker Image') {
             steps {
-                container('containerd') {
-                    script {
-                        // Login to AWS ECR
-                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
+                container('docker') {
+                    // Autenticación en ECR
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
 
-                        // Build the Docker image using docker
-                        sh """
-                        docker build -t ${ECR_REPO}/${IMAGE_NAME}:latest .
-                        docker push ${ECR_REPO}/${IMAGE_NAME}:latest
-                        """
-                    }
+                    // Construcción de la imagen Docker
+                    sh "docker build -t ${ECR_REPO}:${IMAGE_TAG} ."
                 }
             }
         }
-        
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                container('docker') {
+                    // Push de la imagen a ECR
+                    sh "docker push ${ECR_REPO}:${IMAGE_TAG}"
+                }
+            }
+        }
+
         stage('Push to Dev Branch') {
             steps {
                 script {
                     // Ensure we are on the right branch
-                    sh 'git checkout ${BRANCH_NAME_DEV}'
+                    sh 'git checkout dev'
 
                     // Commit changes (if necessary) and push to dev branch
-                    try {
-                        sh 'git add .'
-                        sh 'git commit -m "Auto: Build passed all checks, pushing to dev branch"'
-                        sh 'git push origin ${BRANCH_NAME_DEV}'
-                    } catch (Exception e) {
-                        echo "No changes to commit."
-                    }
+                    sh 'git add .'
+                    sh 'git commit -m "Auto: Build passed all checks, pushing to dev branch"'
+                    sh 'git push origin dev'
                 }
             }
         }
-
-        stage('Deploy to Dev Environment') {
-            steps {
-                container('kubectl') { // Assuming you have kubectl installed in a container
-                    script {
-                        // Apply the Kubernetes deployment
-                        sh """
-                        kubectl set image deployment/your-app-deployment \
-                        your-app-container=${ECR_REPO}/${IMAGE_NAME}:latest \
-                        --namespace dev_dna
-                        """
-
-                        // Optionally verify deployment statusaaa
-                        sh "kubectl rollout status deployment/your-app-deployment --namespace dev_dna"
-                    }
-                }
-            }
-        }
-
     }
 }
