@@ -32,7 +32,7 @@ pipeline {
                 - cat
                 tty: true
               - name: containerd
-                image: moby/moby:20.10
+                image: containerd/containerd
                 command:
                 - cat
                 tty: true
@@ -111,13 +111,10 @@ pipeline {
                         // Login to AWS ECR
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
 
-                        // Build the Docker image using containerd
+                        // Build the Docker image using docker
                         sh """
-                        buildctl build \
-                            --frontend dockerfile.v0 \
-                            --local context=. \
-                            --local dockerfile=. \
-                            --output type=image,name=${ECR_REPO}/${IMAGE_NAME}:latest,push=true
+                        docker build -t ${ECR_REPO}/${IMAGE_NAME}:latest .
+                        docker push ${ECR_REPO}/${IMAGE_NAME}:latest
                         """
                     }
                 }
@@ -128,12 +125,16 @@ pipeline {
             steps {
                 script {
                     // Ensure we are on the right branch
-                    sh 'git checkout dev'
+                    sh 'git checkout ${BRANCH_NAME_DEV}'
 
                     // Commit changes (if necessary) and push to dev branch
-                    sh 'git add .'
-                    sh 'git commit -m "Auto: Build passed all checks, pushing to dev branch"'
-                    sh 'git push origin dev'
+                    try {
+                        sh 'git add .'
+                        sh 'git commit -m "Auto: Build passed all checks, pushing to dev branch"'
+                        sh 'git push origin ${BRANCH_NAME_DEV}'
+                    } catch (Exception e) {
+                        echo "No changes to commit."
+                    }
                 }
             }
         }
