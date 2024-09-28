@@ -150,7 +150,7 @@ pipeline {
                         --namespace dev_dna
                         """
 
-                        // Optionally verify deployment status
+                        // Optionally verify deployment statusaaa
                         sh "kubectl rollout status deployment/your-app-deployment --namespace dev_dna"
                     }
                 }
