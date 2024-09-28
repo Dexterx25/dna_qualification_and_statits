@@ -10,7 +10,7 @@ pipeline {
         BRANCH_NAME_DEV = 'dev'
         BRANCH_NAME_QA = 'qa'
         BRANCH_NAME_PROD = 'main'
-        ECR_REPO = '160885288068.dkr.ecr.us-east-2.amazonaws.com/repotest'
+        ECR_REPO = '345594604328.dkr.ecr.us-east-2.amazonaws.com/cdk-hnb659fds-container-assets-345594604328-us-east-2'
     }
     agent {
         kubernetes {
@@ -31,20 +31,18 @@ pipeline {
                 command:
                 - cat
                 tty: true
-              - name: docker
-                image: docker:20.10
+              - name: containerd
+                image: moby/moby:20.10
                 command:
                 - cat
                 tty: true
-                securityContext:
-                  privileged: true
                 volumeMounts:
-                - name: docker-socket
-                  mountPath: /var/run/docker.sock
+                - name: containerd-socket
+                  mountPath: /run/containerd/containerd.sock
               volumes:
-              - name: docker-socket
+              - name: containerd-socket
                 hostPath:
-                  path: /var/run/docker.sock
+                  path: /run/containerd/containerd.sock
             """
         }
     }
@@ -52,13 +50,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                container('docker') {
-                    sh 'docker build -t my-app .'
-                }
             }
         }
         stage('Build') {
@@ -113,25 +104,26 @@ pipeline {
             }
         }
 
-        stage('Docker Build and Push to ECR') {
+        stage('Build and Push Docker Image to ECR') {
             steps {
-                container('docker') {
+                container('containerd') {
                     script {
                         // Login to AWS ECR
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
 
-                        // Build Docker image
-                        sh "docker build -t ${IMAGE_NAME}:latest ."
-
-                        // Tag Docker image for ECR
-                        sh "docker tag ${IMAGE_NAME}:latest ${ECR_REPO}/${IMAGE_NAME}:latest"
-
-                        // Push Docker image to ECR
-                        sh "docker push ${ECR_REPO}/${IMAGE_NAME}:latest"
+                        // Build the Docker image using containerd
+                        sh """
+                        buildctl build \
+                            --frontend dockerfile.v0 \
+                            --local context=. \
+                            --local dockerfile=. \
+                            --output type=image,name=${ECR_REPO}/${IMAGE_NAME}:latest,push=true
+                        """
                     }
                 }
             }
         }
+        
         stage('Push to Dev Branch') {
             steps {
                 script {
