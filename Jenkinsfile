@@ -1,9 +1,9 @@
 pipeline {
     environment {
         COVERAGE_THRESHOLD = 90
-        SONARQUBE_SERVER = 'sonarServer'
-        SCANNER_HOME = tool 'sonarScanner'
-        SONAR_URL = 'http://a02453268702b401a9c518863c6dc480-1587072234.us-east-2.elb.amazonaws.com:9000'
+        SONARQUBE_SERVER = 'sonar-server'
+        SCANNER_HOME = tool 'sonar-scanner-qube'
+        SONAR_URL = 'http://a959089c3765e4bb2a919f19710f2764-688819079.us-east-2.elb.amazonaws.com:9000'
         SONAR_PROJECT = 'dna'
         AWS_REGION = 'us-east-2'
         IMAGE_NAME = 'dna'
