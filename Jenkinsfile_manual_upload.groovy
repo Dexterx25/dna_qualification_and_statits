@@ -32,19 +32,11 @@ pipeline {
                 command:
                 - cat
                 tty: true
-              - name: kaniko
-                workingDir: /home/jenkins
-                image: gcr.io/kaniko-project/executor:debug
-                imagePullPolicy: Always
+              - name: docker
+                image: docker:latest
                 command:
-                - /busybox/cat
+                - cat
                 tty: true
-                volumeMounts:
-                - name: docker-config
-                  mountPath: /kaniko/.docker/
-                - name: aws-secret
-                  mountPath: /root/.aws/
-              restartPolicy: Never
             """
         }
     }
