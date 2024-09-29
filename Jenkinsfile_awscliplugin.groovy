@@ -11,6 +11,7 @@ pipeline {
         BRANCH_NAME_QA = 'qa'
         BRANCH_NAME_PROD = 'main'
         ECR_REPO = '345594604328.dkr.ecr.us-east-2.amazonaws.com/cdk-hnb659fds-container-assets-345594604328-us-east-2'
+        IMAGE_TAG = "${BRANCH_NAME_DEV}-${env.BUILD_ID}"
     }
     agent {
         kubernetes {
@@ -45,13 +46,6 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                container('docker') {
-                    sh 'docker build -t my-app .'
-                }
-            }
-        }
         stage('Build') {
             steps {
                 script {
@@ -78,7 +72,7 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube Analysis') {
+       stage('SonarQube Analysis') {
             steps {
                 script {
                     def scannerHome = "${SCANNER_HOME}"
@@ -103,8 +97,17 @@ pipeline {
                 }
             }
         }
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    docker.withRegistry("https://${ECR_REPO}", 'id-credential-docker-aws') {
+                        def app = docker.build("${ECR_REPO}:${IMAGE_TAG}")
+                        app.push("${IMAGE_TAG}")
+                    }
+                }
+            }
+        }
 
- 
         stage('Push to Dev Branch') {
             steps {
                 script {
@@ -118,6 +121,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
