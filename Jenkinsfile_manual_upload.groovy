@@ -32,11 +32,19 @@ pipeline {
                 command:
                 - cat
                 tty: true
-              - name: docker
-                image: docker:latest
+              - name: kaniko
+                workingDir: /home/jenkins
+                image: gcr.io/kaniko-project/executor:debug
+                imagePullPolicy: Always
                 command:
-                - cat
+                - /busybox/cat
                 tty: true
+                volumeMounts:
+                - name: docker-config
+                  mountPath: /kaniko/.docker/
+                - name: aws-secret
+                  mountPath: /root/.aws/
+              restartPolicy: Never
             """
         }
     }
@@ -184,14 +192,14 @@ pipeline {
                 """
             }
         }
-        stage('Push to QA Branch') {
+        stage('Push to PROD Branch') {
             steps {
                 script {
-                    sh 'git checkout qa'
+                    sh 'git checkout prod'
 
                     sh 'git add .'
-                    sh 'git commit -m "Auto: Build passed all checks, pushing to qa branch"'
-                    sh 'git push origin qa'
+                    sh 'git commit -m "Auto: Build passed all checks, pushing to prod branch"'
+                    sh 'git push origin prod'
                 }
             }
         }
