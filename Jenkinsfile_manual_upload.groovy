@@ -195,11 +195,11 @@ pipeline {
         stage('Push to PROD Branch') {
             steps {
                 script {
-                    sh 'git checkout prod'
+                    sh 'git checkout main'
 
                     sh 'git add .'
-                    sh 'git commit -m "Auto: Build passed all checks, pushing to prod branch"'
-                    sh 'git push origin prod'
+                    sh 'git commit -m "Auto: Build passed all checks, pushing to main branch"'
+                    sh 'git push origin main'
                 }
             }
         }
