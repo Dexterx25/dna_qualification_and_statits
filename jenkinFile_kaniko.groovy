@@ -13,41 +13,33 @@ pipeline {
         ECR_REPO_URI = '345594604328.dkr.ecr.us-east-2.amazonaws.com/cdk-hnb659fds-container-assets-345594604328-us-east-2'
         IMAGE_TAG = "${BRANCH_NAME_DEV}-${env.BUILD_ID}" // o usa otro tag que prefieras
     }
-       agent {
-        kubernetes {
-            label 'nodejs'
-            defaultContainer 'node'
-            yaml """
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: node
-                image: node:20-alpine
-                command:
-                - cat
-                tty: true
-              - name: sonar-scanner
-                image: sonarsource/sonar-scanner-cli
-                command:
-                - cat
-                tty: true
-              - name: kaniko
-                workingDir: /home/jenkins
-                image: gcr.io/kaniko-project/executor:debug
-                imagePullPolicy: Always
-                command:
-                - /busybox/cat
-                tty: true
-                volumeMounts:
-                - name: docker-config
-                  mountPath: /kaniko/.docker/
-                - name: aws-secret
-                  mountPath: /root/.aws/
-              restartPolicy: Never
-            """
-        }
-    }
+agent {
+     kubernetes {
+         label 'nodejs'
+         defaultContainer 'node'
+         yaml """
+         apiVersion: v1
+         kind: Pod
+         spec:
+           containers:
+           - name: node
+             image: node:20-alpine
+             command:
+             - cat
+             tty: true
+           - name: sonar-scanner
+             image: sonarsource/sonar-scanner-cli
+             command:
+             - cat
+             tty: true
+           - name: kaniko
+             image: gcr.io/kaniko-project/executor:latest
+             command:
+             - cat
+             tty: true
+         """
+     }
+ }
     stages {
         stage('Checkout') {
             steps {
@@ -108,7 +100,7 @@ pipeline {
 
         stage('login aws ECR') {
             steps {
-                container('docker') {
+                container('kaniko') {
                     withCredentials([usernamePassword(credentialsId: 'id-credential-docker-aws', 
                                                       usernameVariable: 'AWS_ACCESS_KEY_ID', 
                                                       passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -124,11 +116,12 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image to ECR') {
+        stage('Build and Push Kaniko Image to ECR') {
             steps {
-                container('docker') {
-                    sh "docker build -t ${ECR_REPO_URI}:${IMAGE_TAG} ."
-                    sh "docker push ${ECR_REPO_URI}:${IMAGE_TAG}"
+                container('kaniko') {
+                    sh """
+                     /kaniko/executor --context `pwd` --dockerfile Dockerfile --verbosity debug --destination ${ECR_REPO_URI}:${IMAGE_TAG}
+                    """
                 }
             }
         }
@@ -202,11 +195,6 @@ pipeline {
                     sh 'git push origin main'
                 }
             }
-        }
-    }
-    post {
-        always {
-            sh 'docker system prune -f'
         }
     }
 }
